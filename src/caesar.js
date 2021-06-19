@@ -1,41 +1,29 @@
-// Please refrain from tampering with the setup code provided here,
-// as the index.html and test files rely on this setup to work properly.
-// Only add code (e.g., helper methods, variables, etc.) within the scope
-// of the anonymous function on line 6
-
 const caesarModule = (function () {
-  // you can add any code you want within this function scope
-
   function caesar(input, shift, encode = true) {
+    //  if input is missing, shift is missing, or the shift is greater than or less than 25 and -25 respectively, return false
     if (!input || !shift || shift === 0 || shift < -25 || shift > 25) {
       return false;
     }
-    let inputSplit = input.split("");
-    for (let i = 0; i < inputSplit.length; i++) {
-      let character = inputSplit[i];
-      let validChar = false;
-      let characterCode = input.toLowerCase().charCodeAt(i);
-      if ((characterCode < 123) & (characterCode > 96)) {
-        encode ? (characterCode += shift) : (characterCode -= shift);
-        validChar = true;
-        character = String.fromCharCode(characterCode);
-      }
-      if ((characterCode > 122) & validChar) {
-        const oldCharCode = characterCode;
-        characterCode = 96 + (oldCharCode - 122);
-        character = String.fromCharCode(characterCode);
-      }
-      if ((characterCode < 97) & validChar) {
-        const oldCharCode = characterCode;
-        characterCode = 123 - (97 - oldCharCode);
-        character = String.fromCharCode(characterCode);
-      }
-      console.log(character);
-      inputSplit[i] = character;
-    }
-    return inputSplit.join("");
+    const reg = /[A-Za-z]/;
+    // returns new string with changed values
+    return input.split("")
+      .reduce((acc, char, index) => {;
+        // tests the character with regular expression, if its not a letter then it just pushes the character and returns accumulator
+        if (!reg.test(char)) {
+          acc.push(char);
+          return acc;
+        }
+        // grab unicode of character
+        let charCode = input.toLowerCase().charCodeAt(index);
+        // if encoding we add the shift, if decoding we subtract the shift
+        encode ? (charCode += shift) : (charCode -= shift);
+        // if it shifted outside of the alpha, wrap it around to the other end
+        charCode > 122 ? charCode-=26: charCode < 97 ? charCode +=26: 0
+        acc.push(String.fromCharCode(charCode));
+        return acc;
+      }, [])
+      .join("");
   }
-
   return {
     caesar,
   };
