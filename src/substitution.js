@@ -1,57 +1,26 @@
-// Please refrain from tampering with the setup code provided here,
-// as the index.html and test files rely on this setup to work properly.
-// Only add code (e.g., helper methods, variables, etc.) within the scope
-// of the anonymous function on line 6
-
 const substitutionModule = (function () {
-  // you can add any code you want within this function scope
-  const defaultAlpha = "abcdefghijklmnopqrstuvwxyz".split("");
+  // default alphabet 
+  const defaultA = "abcdefghijklmnopqrstuvwxyz".split("");
 
-  function substitution(input, alphabet, encode = true) {
-    //error handling
-    if (!alphabet || alphabet.length != 26) {
+  function substitution(input, inputA, encode = true) {
+    // checks if there is an input alphabet, the input alphabet's length is 26, and that each character in input alphabet is unique
+    if (!inputA || inputA.length != 26 || inputA.split("").some((v,i,a) => a.lastIndexOf(v) !== i)) {
       return false;
     }
-    const alphaCheck = alphabet.split("");
-    const result = alphaCheck.some((v, i, a) => {
-      return a.lastIndexOf(v) !== i;
-    });
-    if (result) {
-      return false;
-    }
-    const splitAlpha = alphabet.split("");
-    const splitInput = input.split("");
-    const finalString = [];
-
-    if (encode) {
-      splitInput.forEach((letter) => {
-        for (let i = 0; i < defaultAlpha.length; i++) {
-          if (defaultAlpha[i] === letter) {
-            finalString.push(splitAlpha[i]);
-          }
-        }
-        if (letter === " ") {
-          finalString.push(" ");
-        }
-      });
-      return finalString.join("");
-    }
-
-    if (!encode) {
-      splitInput.forEach((letter) => {
-        for (let i = 0; i < splitAlpha.length; i++) {
-          if (splitAlpha[i] === letter) {
-            finalString.push(defaultAlpha[i]);
-          }
-        }
-        if (letter === " ") {
-          finalString.push(" ");
-        }
-      });
-      return finalString.join("");
-    }
+    // changes which alphabet to use for decoding/encoding based on parameter input
+    const encoderArray = encode? [defaultA,inputA.split("")] : [inputA.split(""),defaultA]
+    // checks each letter of the input string and returns a strings with all changed values
+    return input.toLowerCase().split("").reduce((acc,letter)=>{
+      // if the input alphabet doesn't contain the letter, push the letter as is
+      if(!inputA.split("").includes(letter)){
+        acc.push(letter)
+      }else{
+      // if it does contain, use the index of where the letter is in the first array to match the letter to the second array.
+        acc.push(encoderArray[1][encoderArray[0].indexOf(letter)])
+      }
+      return acc
+    },[]).join("")
   }
-
   return {
     substitution,
   };
